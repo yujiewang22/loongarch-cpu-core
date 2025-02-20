@@ -38,7 +38,7 @@ module deu_gpr_ctl (
    logic [`LA64_ARF_NUM-1:1] [`LA64_DATA_WIDTH-1:0] gpr_out;   
 
    for (genvar i=1; i<32; i++ ) begin : gpr
-      dff #(WIDTH(`LA64_DATA_WIDTH)) u_dff_gpr (.*, .en(gpr_we[i]), .din(gpr_in[i]), .dout(gpr_out[i]));
+      dffe #(WIDTH(`LA64_DATA_WIDTH)) u_dffe_gpr (.*, .en(gpr_we[i]), .din(gpr_in[i]), .dout(gpr_out[i]));
    end : gpr
    
    always_comb begin

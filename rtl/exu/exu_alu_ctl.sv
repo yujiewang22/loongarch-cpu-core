@@ -13,9 +13,9 @@ module exu_alu_ctl (
     logic [`LA64_DATA_WIDTH-1:0] src1_ff;
     logic [`LA64_DATA_WIDTH-1:0] src2_ff;
 
-    dff #(WIDTH(`ALU_OP_WIDTH   )) u_dff_alu_op_ff (.*, .en(), .din(alu_op), .dout(alu_op_ff));
-    dff #(WIDTH(`LA64_DATA_WIDTH)) u_dff_src1_ff   (.*, .en(), .din(src1  ), .dout(src1_ff  ));
-    dff #(WIDTH(`LA64_DATA_WIDTH)) u_dff_src2_ff   (.*, .en(), .din(src2  ), .dout(src2_ff  ));
+    dffe #(WIDTH(`ALU_OP_WIDTH   )) u_dffe_alu_op_ff (.*, .en(), .din(alu_op), .dout(alu_op_ff));
+    dffe #(WIDTH(`LA64_DATA_WIDTH)) u_dffe_src1_ff   (.*, .en(), .din(src1  ), .dout(src1_ff  ));
+    dffe #(WIDTH(`LA64_DATA_WIDTH)) u_dffe_src2_ff   (.*, .en(), .din(src2  ), .dout(src2_ff  ));
 
     logic op_add;
     logic op_sub;
