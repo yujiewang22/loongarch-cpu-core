@@ -9,7 +9,7 @@ module deu_ib_ctl (
     input  logic [`LA64_INST_WIDTH-1:0] ifu_i0_inst, 
 
     input  logic                        ifu_i1_valid,
-    input  logic [`LA64_PC_WIDTH-1:1]   ifu_i1_pc,          
+    input  logic [`LA64_PC_WIDTH-1:0]   ifu_i1_pc,          
     input  logic [`LA64_INST_WIDTH-1:0] ifu_i1_inst,
 
     output logic                        deu_ib0_val,
