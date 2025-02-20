@@ -5,7 +5,7 @@ module deu_ib_ctl (
     input  logic 	                    rst_n,   
 
     input  logic                        ifu_i0_valid,                
-    input  logic [`LA64_PC_WIDTH-1:1]   ifu_i0_pc,
+    input  logic [`LA64_PC_WIDTH-1:0]   ifu_i0_pc,
     input  logic [`LA64_INST_WIDTH-1:0] ifu_i0_inst, 
 
     input  logic                        ifu_i1_valid,
@@ -18,11 +18,11 @@ module deu_ib_ctl (
     output logic                        deu_ib3_val,
 
     input  logic                        deu_i0_decode,              
-    output logic [`LA64_PC_WIDTH-1:1]   deu_i0_pc,
+    output logic [`LA64_PC_WIDTH-1:0]   deu_i0_pc,
     output logic [`LA64_INST_WIDTH-1:0] deu_i0_inst,
 
     input  logic                        deu_i1_decode,
-    output logic [`LA64_PC_WIDTH-1:1]   deu_i1_pc,
+    output logic [`LA64_PC_WIDTH-1:0]   deu_i1_pc,
     output logic [`LA64_INST_WIDTH-1:0] deu_i1_inst  
 );
 
