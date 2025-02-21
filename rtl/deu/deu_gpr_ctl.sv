@@ -1,4 +1,4 @@
-`include "constants.vh"
+`include "../include/constants.vh"
 
 module deu_gpr_ctl (
    input  logic                        clk,
@@ -14,10 +14,10 @@ module deu_gpr_ctl (
    input  logic [`LA64_ARF_SEL-1:0]    raddr2,
    input  logic [`LA64_ARF_SEL-1:0]    raddr3, 
    
-   output logic [`LA64_DATA_WIDTH-1:0] rd0,  
-   output logic [`LA64_DATA_WIDTH-1:0] rd1,
-   output logic [`LA64_DATA_WIDTH-1:0] rd2,
-   output logic [`LA64_DATA_WIDTH-1:0] rd3,
+   output logic [`LA64_DATA_WIDTH-1:0] rdata0,  
+   output logic [`LA64_DATA_WIDTH-1:0] rdata1,
+   output logic [`LA64_DATA_WIDTH-1:0] rdata2,
+   output logic [`LA64_DATA_WIDTH-1:0] rdata3,
 
    input  logic                        we0,         
    input  logic                        we1, 
@@ -27,9 +27,9 @@ module deu_gpr_ctl (
    input  logic [`LA64_ARF_SEL-1:0]    waddr1, 
    input  logic [`LA64_ARF_SEL-1:0]    waddr2, 
  
-   input  logic [`LA64_DATA_WIDTH-1:0] wd0,    
-   input  logic [`LA64_DATA_WIDTH-1:0] wd1,
-   input  logic [`LA64_DATA_WIDTH-1:0] wd2  
+   input  logic [`LA64_DATA_WIDTH-1:0] wdata0,    
+   input  logic [`LA64_DATA_WIDTH-1:0] wdata1,
+   input  logic [`LA64_DATA_WIDTH-1:0] wdata2  
 );
 
    logic [`LA64_ARF_NUM-1:1]                        w0v,w1v,w2v; 
@@ -42,24 +42,24 @@ module deu_gpr_ctl (
    end : gpr
    
    always_comb begin
-      rd0 = 32'b0;
-      rd1 = 32'b0;
-      rd2 = 32'b0;
-      rd3 = 32'b0;   
+      rdata0 = 32'b0;
+      rdata1 = 32'b0;
+      rdata2 = 32'b0;
+      rdata3 = 32'b0;   
       gpr_in[31:1] = 'd0;
       // Gpr read
       for (int i=1; i<32; i++)  begin
-         rd0 |= ({32{re0 & (raddr0 == 5'(i))}} & gpr_out[i]);
-         rd1 |= ({32{re1 & (raddr1 == 5'(i))}} & gpr_out[i]);
-         rd2 |= ({32{re2 & (raddr2 == 5'(i))}} & gpr_out[i]);
-         rd3 |= ({32{re3 & (raddr3 == 5'(i))}} & gpr_out[i]); 
+         rdata0 |= ({32{re0 & (raddr0 == 5'(i))}} & gpr_out[i]);
+         rdata1 |= ({32{re1 & (raddr1 == 5'(i))}} & gpr_out[i]);
+         rdata2 |= ({32{re2 & (raddr2 == 5'(i))}} & gpr_out[i]);
+         rdata3 |= ({32{re3 & (raddr3 == 5'(i))}} & gpr_out[i]); 
       end 
       // Gpr write
       for (int i=1; i<32; i++)  begin
          w0v[i]     = we0 & (waddr0 == 5'(i));
          w1v[i]     = we1 & (waddr1 == 5'(i));
          w2v[i]     = we2 & (waddr2 == 5'(i));
-         gpr_in[i]  = ({32{w0v[i]}} & wd0[31:0]) | ({32{w1v[i]}} & wd1[31:0]) | ({32{w2v[i]}} & wd2[31:0]);    
+         gpr_in[i]  = ({32{w0v[i]}} & wdata0) | ({32{w1v[i]}} & wdata1) | ({32{w2v[i]}} & wdata2);    
       end	 
    end 
 

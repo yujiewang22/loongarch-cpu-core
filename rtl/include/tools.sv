@@ -1,5 +1,3 @@
-`include "constants.vh"
-
 module dff #(
     parameter WIDTH = 1 
 )( 

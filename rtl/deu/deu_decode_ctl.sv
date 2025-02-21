@@ -1,18 +1,18 @@
-`include "constants.vh"
+`include "../include/constants.vh"
 
 module deu_decode_ctl (
     input  logic [`LA64_INST_WIDTH-1:0] inst,
     output logic                        inst_valid,
     output logic [`LA64_DATA_WIDTH-1:0] imm,
-    output logic                        rf_re1,
-    output logic                        rf_re2, 
+    output logic                        rf_re0,
+    output logic                        rf_re1, 
     output logic                        rf_we,
+    output logic [`LA64_ARF_SEL-1:0]    rf_raddr0,
     output logic [`LA64_ARF_SEL-1:0]    rf_raddr1,
-    output logic [`LA64_ARF_SEL-1:0]    rf_raddr2,
     output logic [`LA64_ARF_SEL-1:0]    rf_waddr,
-    output logic                        src1_is_pc,
-    output logic                        src2_is_imm,
-    output logic                        src2_is_4,
+    output logic                        src0_is_pc,
+    output logic                        src1_is_imm,
+    output logic                        src1_is_4,
     output logic [`ALU_OP_WIDTH-1:0]    alu_op,
     output logic                        mul_signed,
     output logic                        mul_low  
@@ -188,9 +188,9 @@ module deu_decode_ctl (
                  ({`LA64_DATA_WIDTH{need_si26_pc}} & {{ 4{i26[25]}}, i26, 2'b0}) ;
 
     // Imformation
-    assign src1_is_pc = inst_bl;
+    assign src0_is_pc = inst_bl;
 
-    assign src2_is_imm = inst_slli_w  |
+    assign src1_is_imm = inst_slli_w  |
                          inst_srli_w  |
                          inst_srai_w  |
                          inst_slti    |
@@ -209,11 +209,11 @@ module deu_decode_ctl (
                          inst_ld_bu   |
                          inst_ld_hu;
 
-    assign src2_is_4 = inst_bl;
+    assign src1_is_4 = inst_bl;
 
     // Regfile
 
-    assign rf_re1 = inst_add_w   |
+    assign rf_re0 = inst_add_w   |
                     inst_sub_w   |
                     inst_slt     |
                     inst_sltu    |
@@ -251,7 +251,7 @@ module deu_decode_ctl (
                     inst_bltu    |
                     inst_bgeu;
 
-    assign rf_re2 = inst_add_w   |
+    assign rf_re1 = inst_add_w   |
                     inst_sub_w   |
                     inst_slt     |
                     inst_sltu    |
@@ -304,8 +304,8 @@ module deu_decode_ctl (
 
     assign dst_is_r1 = inst_bl;
 
-    assign rf_raddr1 = rj;
-    assign rf_raddr2 = src2_is_rd ? rd : rk;
+    assign rf_raddr0 = rj;
+    assign rf_raddr1 = src2_is_rd ? rd : rk;
     assign rf_waddr  = dst_is_r1 ? 5'd1 : rd;
 
     // Alu_op

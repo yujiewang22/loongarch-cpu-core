@@ -1,4 +1,4 @@
-`include "constants.vh"
+`include "../include/constants.vh"
 
 module deu_ib_ctl (
     input  logic 	                    clk,
@@ -134,9 +134,9 @@ module deu_ib_ctl (
 
     assign {deu_ib3_val, deu_ib2_val, deu_ib1_val, deu_ib0_val} = ibval;
 
-    assign deu_i0_pc   = ibpc0;
-    assign deu_i1_pc   = ibpc1;
-    assign deu_i0_inst = ib0;
-    assign deu_i1_inst = ib1;
+    assign deu_i0_pc   = deu_i0_decode ? ibpc0 : 'd0;
+    assign deu_i1_pc   = deu_i1_decode ? ibpc1 : 'd0;
+    assign deu_i0_inst = deu_i0_decode ? ib0 : 'd0;
+    assign deu_i1_inst = deu_i1_decode ? ib1 : 'd0;
 
 endmodule

@@ -1,21 +1,21 @@
-`include "constants.vh"
+`include "../include/constants.vh"
 
 module exu_alu_ctl (
     input  logic                        clk,              
     input  logic                        rst_n,  
     input  logic [`ALU_OP_WIDTH-1:0]    alu_op,
+    input  logic [`LA64_DATA_WIDTH-1:0] src0,
     input  logic [`LA64_DATA_WIDTH-1:0] src1,
-    input  logic [`LA64_DATA_WIDTH-1:0] src2,
     output logic [`LA64_DATA_WIDTH-1:0] result
 );
 
     logic [`ALU_OP_WIDTH-1:0]    alu_op_ff;
+    logic [`LA64_DATA_WIDTH-1:0] src0_ff;
     logic [`LA64_DATA_WIDTH-1:0] src1_ff;
-    logic [`LA64_DATA_WIDTH-1:0] src2_ff;
 
-    dffe #(WIDTH(`ALU_OP_WIDTH   )) u_dffe_alu_op_ff (.*, .en(), .din(alu_op), .dout(alu_op_ff));
-    dffe #(WIDTH(`LA64_DATA_WIDTH)) u_dffe_src1_ff   (.*, .en(), .din(src1  ), .dout(src1_ff  ));
-    dffe #(WIDTH(`LA64_DATA_WIDTH)) u_dffe_src2_ff   (.*, .en(), .din(src2  ), .dout(src2_ff  ));
+    dff #(WIDTH(`ALU_OP_WIDTH   )) u_dff_alu_op_ff (.*, .din(alu_op), .dout(alu_op_ff));
+    dff #(WIDTH(`LA64_DATA_WIDTH)) u_dff_src0_ff   (.*, .din(src0  ), .dout(src0_ff  ));
+    dff #(WIDTH(`LA64_DATA_WIDTH)) u_dff_src1_ff   (.*, .din(src1  ), .dout(src1_ff  ));
 
     logic op_add;
     logic op_sub;
@@ -67,8 +67,8 @@ module exu_alu_ctl (
     assign op_sra  = alu_op_ff[12];
     assign op_lui  = alu_op_ff[13]; 
     
-    assign adder_a   = src1_ff;
-    assign adder_b   = (op_sub | op_slt | op_sltu) ? ~src2_ff : src2_ff;  
+    assign adder_a   = src0_ff;
+    assign adder_b   = (op_sub | op_slt | op_sltu) ? ~src1_ff : src1_ff;  
     assign adder_cin = (op_sub | op_slt | op_sltu) ? 1'b1      : 1'b0;
     assign {adder_cout, adder_result} = adder_a + adder_b + adder_cin;
 
@@ -77,8 +77,8 @@ module exu_alu_ctl (
 
     // SLT result
     assign slt_result[31:1] = 31'b0;  
-    assign slt_result[0]    = (src1_ff[31] & ~src2_ff[31])
-                            | ((src1_ff[31] ~^ src2_ff[31]) & adder_result[31]);
+    assign slt_result[0]    = (src0_ff[31] & ~src1_ff[31])
+                            | ((src0_ff[31] ~^ src1_ff[31]) & adder_result[31]);
 
     // SLTU result
     assign sltu_result[31:1] = 31'b0;
@@ -86,22 +86,22 @@ module exu_alu_ctl (
 
     // Bitwise operation
     assign nor_result = ~or_result;
-    assign and_result = src1_ff & src2_ff;
-    assign or_result  = src1_ff | src2_ff;    
-    assign xor_result = src1_ff ^ src2_ff;
-    assign orn_result = src1_ff | ~src2_ff;
-    assign andn_result= src1_ff & ~src2_ff;
+    assign and_result = src0_ff & src1_ff;
+    assign or_result  = src0_ff | src1_ff;    
+    assign xor_result = src0_ff ^ src1_ff;
+    assign orn_result = src0_ff | ~src1_ff;
+    assign andn_result= src0_ff & ~src1_ff;
 
     // SLL result 
-    assign sll_result = src1_ff << src2_ff[4:0];  
+    assign sll_result = src0_ff << src1_ff[4:0];  
 
     // SRL, SRA result
     logic [63:0] sr_64_result;
-    assign sr_64_result = {{32{op_sra & src1_ff[31]}}, src1_ff[31:0]} >> src2_ff[4:0]; 
+    assign sr_64_result = {{32{op_sra & src0_ff[31]}}, src0_ff[31:0]} >> src1_ff[4:0]; 
     assign sr_result   = sr_64_result[31:0];
 
     // Lui result
-    assign lui_result = src2_ff;
+    assign lui_result = src1_ff;
 
     // Final result mux
     assign result = ({`LA64_DATA_WIDTH{op_add | op_sub}} & add_sub_result) | 
